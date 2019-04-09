@@ -78,6 +78,8 @@ cd mmdetection-hrnet
 # Download pretrained models into this folder
 mkdir hrnetv2_pretrained
 ```
+#### Datasets
+Please download the COCO dataset from [cocodataset](http://cocodataset.org/#download). If you use `zip` format, please specify `CocoZipDataset` in **config** files or `CocoDataset` if you unzip the downloaded dataset. 
 
 #### Train (multi-gpu training)
 Please specify the configuration file in `configs` (learning rate should be adjusted when the number of GPUs is changed).
