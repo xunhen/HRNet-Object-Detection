@@ -1,262 +1,123 @@
-
-# mmdetection
-
+# High-resolution networks (HRNets) for object detection
 ## Introduction
+This is the official code of [High-Resolution Representations for Object Detection](). We extend the high-resolution representation (HRNet) [1] by augmenting the high-resolution representation by aggregating the (upsampled) representations from all the parallel
+convolutions, leading to stronger representations. We build a multi-level representation from the high resolution and apply it to the Faster R-CNN, Mask R-CNN and Cascade R-CNN framework. This proposed approach achieves superior results to existing single-model networks 
+on COCO object detection. The code is based on [mmdetection](https://github.com/open-mmlab/mmdetection)
 
-The master branch works with **PyTorch 1.0**. If you would like to use PyTorch 0.4.1,
-please checkout to the [pytorch-0.4.1](https://github.com/open-mmlab/mmdetection/tree/pytorch-0.4.1) branch.
+<div align=center>
 
-mmdetection is an open source object detection toolbox based on PyTorch. It is
-a part of the open-mmlab project developed by [Multimedia Laboratory, CUHK](http://mmlab.ie.cuhk.edu.hk/).
+![](images/hrnetv2p.png)
 
-![demo image](demo/coco_test_12510.jpg)
+</div>
 
-### Major features
+## Performance
+### ImageNet pretrained models
+HRNetV2 ImageNet pretrained models are now available! Codes and pretrained models are in [HRNets for Image Classification](https://github.com/HRNet/HRNet-Imagenet-Classification)
 
-- **Modular Design**
+All models are trained on COCO *train2017* set and evaluated on COCO *val2017* set. Detailed settings or configurations are in [`configs/hrnet`](configs/hrnet).
 
-  One can easily construct a customized object detection framework by combining different components.
+**Note:** Models are trained with the newly released code and the results have minor differences with that in the paper. 
+Current results will be updated soon and more models and results are comming.
 
-- **Support of multiple frameworks out of box**
+### Faster R-CNN
+|Backbone|#Params|GFLOPs|lr sched|mAP|pretrained model|detection model|
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| HRNetV2-W18 |26.2M|159.1| 1x | 36.1 | [HRNetV2-W18](https://drive.google.com/open?id=1qxyRvGHEtuDR74IGrsKLN0Si4N-S2vgq) | [FasterR-CNN-HR18-1x.pth](https://drive.google.com/open?id=1EXA85LQkHZvk0LN7F3DH4rmnWJpWXfy_)|
+| HRNetV2-W18 |26.2M|159.1| 2x | 38.1 | [HRNetV2-W18](https://drive.google.com/open?id=1qxyRvGHEtuDR74IGrsKLN0Si4N-S2vgq) | [FasterR-CNN-HR18-2x.pth](https://drive.google.com/open?id=1sZTeCtO-TFtzj0l-q1Lae6k_k_CL48A2)|
+| HRNetV2-W32 |45.0M|245.3| 1x | 39.5 | [HRNetV2-W32](https://drive.google.com/open?id=1EF2AUHIqbBEekL6TaMYO2M5zStdAAKJ5) | [FasterR-CNN-HR32-1x.pth](https://drive.google.com/open?id=1sZTeCtO-TFtzj0l-q1Lae6k_k_CL48A2)|
+| HRNetV2-W32 |45.0M|245.3| 2x | 40.8 | [HRNetV2-W32](https://drive.google.com/open?id=1EF2AUHIqbBEekL6TaMYO2M5zStdAAKJ5) | [FasterR-CNN-HR32-2x.pth](https://drive.google.com/open?id=17LUcyoNff5j1QHRPe4vyRyNzrLVn-8AI)|
+| HRNetV2-W40 |60.5M|314.9| 1x | 40.4 | [HRNetV2-W40](https://drive.google.com/open?id=1iAAZhmxkkYB_pqZ2MlAm4iCC_OBLxzC1) | [FasterR-CNN-HR40-1x.pth](https://drive.google.com/open?id=1UcPuYnBt68itZFvdxDdZfyt472k6nlzv)|
+| HRNetV2-W40 |60.5M|314.9| 2x | 41.4 | [HRNetV2-W40](https://drive.google.com/open?id=1iAAZhmxkkYB_pqZ2MlAm4iCC_OBLxzC1) | [FasterR-CNN-HR40-2x.pth](https://drive.google.com/open?id=1XuljlzTGHCSQXykaNXTLaMfvhC8bJ0Hr)|
 
-  The toolbox directly supports popular detection frameworks, *e.g.* Faster RCNN, Mask RCNN, RetinaNet, etc.
+### Cascade R-CNN
+**Note:** we follow the original paper[2] and adopt 280k training iterations which is equal to 20 epochs in mmdetection.
 
-- **Efficient**
+|Backbone|lr sched|mAP|pretrained model|detection model|
+|:--:|:--:|:--:|:--:|:--:|
+| ResNet-101  | 20e | 42.8 | - | [CascadeR-CNN-R101-20e.pth](https://drive.google.com/open?id=1HEr2TMZcO7m66Xv3VILPhca2bhuhdy0l)|
+| HRNetV2-W32 | 20e | 43.7 | [HRNetV2-W32](https://drive.google.com/open?id=1EF2AUHIqbBEekL6TaMYO2M5zStdAAKJ5) | [CascadeR-CNN-HR32-20e.pth](https://drive.google.com/open?id=18CrpwpfKB6o0U9l3sqJ12qu4xnJLxlB6)|
 
-  All basic bbox and mask operations run on GPUs now.
-  The training speed is about 5% ~ 20% faster than Detectron for different models.
+## Quick start
+#### Environment
+This code is developed using on Python 3.6 and PyTorch 1.0.0 on Ubuntu 16.04 with NVIDIA GPUs. Training and testing are 
+performed using 4 NVIDIA P100 GPUs with CUDA 9.0 and cuDNN 7.0. Other platforms or GPUs are not fully tested.
 
-- **State of the art**
+#### Install
+1. Install PyTorch 1.0 following the [official instructions](https://pytorch.org/)
+2. Install `mmcv`
+````bash
+pip install mmcv
+````
+3. Install `pycocotools`
+````bash
+git clone https://github.com/cocodataset/cocoapi.git \
+ && cd cocoapi/PythonAPI \
+ && python setup.py build_ext install \
+ && cd ../../
+````
+4. Install `mmdetection-hrnet`
+````bash
+git clone https://github.com/HRNet/HRNet-Object-Detection.git
 
-  This was the codebase of the *MMDet* team, who won the [COCO Detection 2018 challenge](http://cocodataset.org/#detection-leaderboard).
+cd mmdetection-hrnet
+# compile CUDA extensions.
+chmod +x compile.sh
+./compile.sh
 
-Apart from mmdetection, we also released a library [mmcv](https://github.com/open-mmlab/mmcv) for computer vision research,
-which is heavily depended on by this toolbox.
+# run setup
+python setup.py install 
 
-## License
+# or install locally
+python setup.py install --user
+````
+For more details, see [INSTALL.md](INSTALL.md)
 
-This project is released under the [Apache 2.0 license](LICENSE).
-
-## Updates
-
-v0.6rc0(06/02/2019)
-- Migrate to PyTorch 1.0.
-
-v0.5.7 (06/02/2019)
-- Add support for Deformable ConvNet v2. (Many thanks to the authors and [@chengdazhi](https://github.com/chengdazhi))
-- This is the last release based on PyTorch 0.4.1.
-
-v0.5.6 (17/01/2019)
-- Add support for Group Normalization.
-- Unify RPNHead and single stage heads (RetinaHead, SSDHead) with AnchorHead.
-
-v0.5.5 (22/12/2018)
-- Add SSD for COCO and PASCAL VOC.
-- Add ResNeXt backbones and detection models.
-- Refactoring for Samplers/Assigners and add OHEM.
-- Add VOC dataset and evaluation scripts.
-
-v0.5.4 (27/11/2018)
-- Add SingleStageDetector and RetinaNet.
-
-v0.5.3 (26/11/2018)
-- Add Cascade R-CNN and Cascade Mask R-CNN.
-- Add support for Soft-NMS in config files.
-
-v0.5.2 (21/10/2018)
-- Add support for custom datasets.
-- Add a script to convert PASCAL VOC annotations to the expected format.
-
-v0.5.1 (20/10/2018)
-- Add BBoxAssigner and BBoxSampler, the `train_cfg` field in config files are restructured.
-- `ConvFCRoIHead` / `SharedFCRoIHead` are renamed to `ConvFCBBoxHead` / `SharedFCBBoxHead` for consistency.
-
-## Benchmark and model zoo
-
-Supported methods and backbones are shown in the below table.
-Results and models are available in the [Model zoo](MODEL_ZOO.md).
-
-|                    | ResNet   | ResNeXt  | SENet    | VGG      |
-|--------------------|:--------:|:--------:|:--------:|:--------:|
-| RPN                | ✓        | ✓        | ☐        | ✗        |
-| Fast R-CNN         | ✓        | ✓        | ☐        | ✗        |
-| Faster R-CNN       | ✓        | ✓        | ☐        | ✗        |
-| Mask R-CNN         | ✓        | ✓        | ☐        | ✗        |
-| Cascade R-CNN      | ✓        | ✓        | ☐        | ✗        |
-| Cascade Mask R-CNN | ✓        | ✓        | ☐        | ✗        |
-| SSD                | ✗        | ✗        | ✗        | ✓        |
-| RetinaNet          | ✓        | ✓        | ☐        | ✗        |
-
-Other features
-- [x] DCNv2
-- [x] Group Normalization
-- [x] OHEM
-- [x] Soft-NMS
-
-
-## Installation
-
-Please refer to [INSTALL.md](INSTALL.md) for installation and dataset preparation.
-
-
-## Inference with pretrained models
-
-### Test a dataset
-
-- [x] single GPU testing
-- [x] multiple GPU testing
-- [x] visualize detection results
-
-We allow to run one or multiple processes on each GPU, e.g. 8 processes on 8 GPU
-or 16 processes on 8 GPU. When the GPU workload is not very heavy for a single
-process, running multiple processes will accelerate the testing, which is specified
-with the argument `--proc_per_gpu <PROCESS_NUM>`.
-
-
-To test a dataset and save the results.
-
-```shell
-python tools/test.py <CONFIG_FILE> <CHECKPOINT_FILE> --gpus <GPU_NUM> --out <OUT_FILE>
+#### HRNetV2 pretrained models
+```bash
+cd mmdetection-hrnet
+# Download pretrained models into this folder
+mkdir hrnetv2_pretrained
 ```
 
-To perform evaluation after testing, add `--eval <EVAL_TYPES>`. Supported types are:
-`[proposal_fast, proposal, bbox, segm, keypoints]`.
-`proposal_fast` denotes evaluating proposal recalls with our own implementation,
-others denote evaluating the corresponding metric with the official coco api.
+#### Train (multi-gpu training)
+Please specify the configuration file in `configs` (learning rate should be adjusted when the number of GPUs is changed).
+````bash
+python -m torch.distributed.launch --nproc_per_node <GPUS NUM> tools/train.py <CONFIG-FILE> --launcher pytorch
+# example:
+python -m torch.distributed.launch --nproc_per_node 4 tools/train.py configs/hrnet/faster_rcnn_hrnetv2p_w18_1x.py --launcher pytorch
+````
 
-For example, to evaluate Mask R-CNN with 8 GPUs and save the result as `results.pkl`.
+#### Test
+````bash
+python tools/test.py <CONFIG-FILE> <MODEL WEIGHT> --gpus <GPUS NUM> --eval bbox --out result.pkl
+# example:
+python tools/test.py configs/hrnet/faster_rcnn_hrnetv2p_w18_1x.py work_dirs/faster_rcnn_hrnetv2p_w18_1x/model_final.pth --gpus 4 --eval bbox --out result.pkl
+````
 
-```shell
-python tools/test.py configs/mask_rcnn_r50_fpn_1x.py <CHECKPOINT_FILE> --gpus 8 --out results.pkl --eval bbox segm
-```
-
-It is also convenient to visualize the results during testing by adding an argument `--show`.
-
-```shell
-python tools/test.py <CONFIG_FILE> <CHECKPOINT_FILE> --show
-```
-
-### Test image(s)
-
-We provide some high-level apis (experimental) to test an image.
-
-```python
-import mmcv
-from mmcv.runner import load_checkpoint
-from mmdet.models import build_detector
-from mmdet.apis import inference_detector, show_result
-
-cfg = mmcv.Config.fromfile('configs/faster_rcnn_r50_fpn_1x.py')
-cfg.model.pretrained = None
-
-# construct the model and load checkpoint
-model = build_detector(cfg.model, test_cfg=cfg.test_cfg)
-_ = load_checkpoint(model, 'https://s3.ap-northeast-2.amazonaws.com/open-mmlab/mmdetection/models/faster_rcnn_r50_fpn_1x_20181010-3d1b3351.pth')
-
-# test a single image
-img = mmcv.imread('test.jpg')
-result = inference_detector(model, img, cfg)
-show_result(img, result)
-
-# test a list of images
-imgs = ['test1.jpg', 'test2.jpg']
-for i, result in enumerate(inference_detector(model, imgs, cfg, device='cuda:0')):
-    print(i, imgs[i])
-    show_result(imgs[i], result)
-```
-
-
-## Train a model
-
-mmdetection implements distributed training and non-distributed training,
-which uses `MMDistributedDataParallel` and `MMDataParallel` respectively.
-
-### Distributed training (Single or Multiples machines)
-
-mmdetection potentially supports multiple launch methods, e.g., PyTorch’s built-in launch utility, slurm and MPI.
-
-We provide a training script using the launch utility provided by PyTorch.
-
-```shell
-./tools/dist_train.sh <CONFIG_FILE> <GPU_NUM> [optional arguments]
-```
-
-Supported arguments are:
-
-- --validate: perform evaluation every k (default=1) epochs during the training.
-- --work_dir <WORK_DIR>: if specified, the path in config file will be replaced.
-
-Expected results in WORK_DIR:
-
-- log file
-- saved checkpoints (every k epochs, defaults=1)
-- a symbol link to the latest checkpoint
-
-**Important**: The default learning rate is for 8 GPUs. If you use less or more than 8 GPUs, you need to set the learning rate proportional to the GPU num. E.g., modify lr to 0.01 for 4 GPUs or 0.04 for 16 GPUs.
-
-### Non-distributed training
-
-Please refer to `tools/train.py` for non-distributed training, which is not recommended
-and left for debugging. Even on a single machine, distributed training is preferred.
-
-### Train on custom datasets
-
-We define a simple annotation format.
-
-The annotation of a dataset is a list of dict, each dict corresponds to an image.
-There are 3 field `filename` (relative path), `width`, `height` for testing,
-and an additional field `ann` for training. `ann` is also a dict containing at least 2 fields:
-`bboxes` and `labels`, both of which are numpy arrays. Some datasets may provide
-annotations like crowd/difficult/ignored bboxes, we use `bboxes_ignore` and `labels_ignore`
-to cover them.
-
-Here is an example.
-```
-[
-    {
-        'filename': 'a.jpg',
-        'width': 1280,
-        'height': 720,
-        'ann': {
-            'bboxes': <np.ndarray> (n, 4),
-            'labels': <np.ndarray> (n, ),
-            'bboxes_ignore': <np.ndarray> (k, 4),
-            'labels_ignore': <np.ndarray> (k, ) (optional field)
-        }
-    },
-    ...
-]
-```
-
-There are two ways to work with custom datasets.
-
-- online conversion
-
-  You can write a new Dataset class inherited from `CustomDataset`, and overwrite two methods
-  `load_annotations(self, ann_file)` and `get_ann_info(self, idx)`, like [CocoDataset](mmdet/datasets/coco.py) and [VOCDataset](mmdet/datasets/voc.py).
-
-- offline conversion
-
-  You can convert the annotation format to the expected format above and save it to
-  a pickle or json file, like [pascal_voc.py](tools/convert_datasets/pascal_voc.py).
-  Then you can simply use `CustomDataset`.
-
-## Technical details
-
-Some implementation details and project structures are described in the [technical details](TECHNICAL_DETAILS.md).
-
+**NOTE:** If you meet some problems, you may find a solution in [issues of official mmdetection repo](https://github.com/open-mmlab/mmdetection/issues) 
+ or submit a new issue in our repo.
+ 
+## Other applications of HRNets (codes and models):
+* [Human pose estimation](https://github.com/leoxiaobin/deep-high-resolution-net.pytorch)
+* [Semantic segmentation](https://github.com/HRNet/HRNet-Semantic-Segmentation) (coming soon)
+* [Facial landmark detection](https://github.com/HRNet/HRNet-Facial-Landmark-Detection) (coming soon)
+* [Image classification](https://github.com/HRNet/HRNet-Imagenet-Classification)
+ 
 ## Citation
-
-If you use our codebase or models in your research, please cite this project.
-We will release a paper or technical report later.
-
-```
-@misc{mmdetection2018,
-  author =       {Kai Chen and Jiangmiao Pang and Jiaqi Wang and Yu Xiong and Xiaoxiao Li
-                  and Shuyang Sun and Wansen Feng and Ziwei Liu and Jianping Shi and
-                  Wanli Ouyang and Chen Change Loy and Dahua Lin},
-  title =        {mmdetection},
-  howpublished = {\url{https://github.com/open-mmlab/mmdetection}},
-  year =         {2018}
+If you find this work or code is helpful in your research, please cite:
+````
+@inproceedings{sun2019deep,
+  title={Deep High-Resolution Representation Learning for Human Pose Estimation},
+  author={Sun, Ke and Xiao, Bin and Liu, Dong and Wang, Jingdong},
+  booktitle={CVPR},
+  year={2019}
 }
-```
+````
+
+## Reference
+[1] Deep High-Resolution Representation Learning for Human Pose Estimation. Ke Sun, Bin Xiao, Dong Liu, and Jingdong Wang. CVPR 2019.
+
+[2] Cascade R-CNN: Delving into High Quality Object Detection. Zhaowei Cai, and Nuno Vasconcetos. CVPR 2018.
+
+## Acknowledgement
+Thanks [@open-mmlab](https://github.com/open-mmlab) for providing the easily-used code and kind help!

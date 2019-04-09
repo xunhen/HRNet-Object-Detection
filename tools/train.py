@@ -1,5 +1,6 @@
 from __future__ import division
 
+import os
 import argparse
 from mmcv import Config
 
@@ -20,6 +21,7 @@ def parse_args():
     parser.add_argument(
         '--validate',
         action='store_true',
+        default=True,
         help='whether to evaluate the checkpoint during training')
     parser.add_argument(
         '--gpus',
@@ -51,6 +53,9 @@ def main():
         cfg.work_dir = args.work_dir
     if args.resume_from is not None:
         cfg.resume_from = args.resume_from
+    latest_path = os.path.join(cfg.work_dir, 'latest.pth')
+    if os.path.exists(latest_path):
+        cfg.resume_from = latest_path
     cfg.gpus = args.gpus
     if cfg.checkpoint_config is not None:
         # save mmdet version in checkpoints as meta data
