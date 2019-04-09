@@ -215,7 +215,12 @@
 
     The following components are provided under an Apache 2.0 license.
 
-    1. ??? - For details, /cpp-package/LICENSE
-         Copyright (c) 2015-2016 by Contributors 
-   
+    1. hrnet.py - For details, mmdet/models/backbones/hrnet.py
+         Copyright (c) 2019 Microsoft
+    2. hrfpn.py - For details, mmdet/models/necks/hrfpn.py
+         Copyright (c) 2019 Microsoft
+    3. coco_zip.py - For details, mmdet/datasets/coco_zip.py
+         Copyright (c) 2019 Microsoft
+    4. zip_dataset.py - For details, mmdet/datasets/zip_dataset.py
+         Copyright (c) 2019 Microsoft
    
