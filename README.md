@@ -115,7 +115,7 @@ If you find this work or code is helpful in your research, please cite:
   year={2019}
 }
 
-@inproceedings{SunZJCXLMWLW19,
+@article{SunZJCXLMWLW19,
   title={High-Resolution Representations for Labeling Pixels and Regions},
   author={Ke Sun and Yang Zhao and Borui Jiang and Tianheng Cheng and Bin Xiao 
   and Dong Liu and Yadong Mu and Xinggang Wang and Wenyu Liu and Jingdong Wang},
