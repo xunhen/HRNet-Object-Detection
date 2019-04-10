@@ -34,7 +34,7 @@ Current results will be updated soon and more models and results are comming.
 
 |Backbone|lr sched|mAP|pretrained model|detection model|
 |:--:|:--:|:--:|:--:|:--:|
-| ResNet-101  | 20e | 42.8 | - | [CascadeR-CNN-R101-20e.pth](https://1drv.ms/u/s!AiWjZ1LamlxzbvOFlCnGhXhKmsY)|
+| ResNet-101  | 20e | 42.8 | [ResNet-101](https://download.pytorch.org/models/resnet101-5d3b4d8f.pth) | [CascadeR-CNN-R101-20e.pth](https://1drv.ms/u/s!AiWjZ1LamlxzbvOFlCnGhXhKmsY)|
 | HRNetV2-W32 | 20e | 43.7 | [HRNetV2-W32](https://1drv.ms/u/s!Aus8VCZ_C_33dYBMemi9xOUFR0w) | [CascadeR-CNN-HR32-20e.pth](https://1drv.ms/u/s!AiWjZ1LamlxzasFUt8GWHW1Og3I)|
 
 ## Quick start
