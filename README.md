@@ -12,7 +12,7 @@ on COCO object detection. The code is based on [mmdetection](https://github.com/
 
 ## Performance
 ### ImageNet pretrained models
-HRNetV2 ImageNet pretrained models are now available! Codes and pretrained models are in [HRNets for Image Classification](https://github.com/HRNet/HRNet-Imagenet-Classification)
+HRNetV2 ImageNet pretrained models are now available! Codes and pretrained models are in [HRNets for Image Classification](https://github.com/HRNet/HRNet-Image-Classification)
 
 All models are trained on COCO *train2017* set and evaluated on COCO *val2017* set. Detailed settings or configurations are in [`configs/hrnet`](configs/hrnet).
 
@@ -103,7 +103,7 @@ python tools/test.py configs/hrnet/faster_rcnn_hrnetv2p_w18_1x.py work_dirs/fast
 * [Human pose estimation](https://github.com/leoxiaobin/deep-high-resolution-net.pytorch)
 * [Semantic segmentation](https://github.com/HRNet/HRNet-Semantic-Segmentation) (coming soon)
 * [Facial landmark detection](https://github.com/HRNet/HRNet-Facial-Landmark-Detection) (coming soon)
-* [Image classification](https://github.com/HRNet/HRNet-Imagenet-Classification)
+* [Image classification](https://github.com/HRNet/HRNet-Image-Classification)
  
 ## Citation
 If you find this work or code is helpful in your research, please cite:
