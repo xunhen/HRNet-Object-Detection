@@ -84,7 +84,7 @@ def _dist_train(model, dataset, cfg, validate=False):
             # TODO: implement recall hooks for other datasets
             runner.register_hook(CocoDistEvalRecallHook(cfg.data.val))
         else:
-            if cfg.data.val.type == 'CocoDataset':
+            if cfg.data.val.type == 'CocoDataset' or cfg.data.val.type == 'CocoZipDataset':
                 runner.register_hook(CocoDistEvalmAPHook(cfg.data.val))
             else:
                 runner.register_hook(DistEvalmAPHook(cfg.data.val))
