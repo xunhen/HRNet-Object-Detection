@@ -36,7 +36,7 @@ class CocoDataset(CustomDataset):
             img_infos.append(info)
         return img_infos
 
-    def lget_ann_info(self, idx):
+    def get_ann_info(self, idx):
         img_id = self.img_infos[idx]['id']
         ann_ids = self.coco.getAnnIds(imgIds=[img_id])
         ann_info = self.coco.loadAnns(ann_ids)
