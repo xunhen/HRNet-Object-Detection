@@ -29,6 +29,18 @@ Current results will be updated soon and more models and results are comming.
 | HRNetV2-W40 |60.5M|314.9| 1x | 40.4 | [HRNetV2-W40](https://1drv.ms/u/s!Aus8VCZ_C_33ck0gvo5jfoWBOPo) | [FasterR-CNN-HR40-1x.pth](https://1drv.ms/u/s!AiWjZ1LamlxzbE6rbdU9whYJkqs)|
 | HRNetV2-W40 |60.5M|314.9| 2x | 41.4 | [HRNetV2-W40](https://1drv.ms/u/s!Aus8VCZ_C_33ck0gvo5jfoWBOPo) | [FasterR-CNN-HR40-2x.pth](https://1drv.ms/u/s!AiWjZ1Lamlxzb1Uy6QLZnsyfuFc)|
 
+### Mask R-CNN
+
+|Backbone|lr sched|Mask mAP|Box mAP|pretrained model|detection model|
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| HRNetV2-W18 | 1x | 34.2 | 37.3 | [HRNetV2-W18](https://1drv.ms/u/s!Aus8VCZ_C_33cMkPimlmClRvmpw) | [MaskR-CNN-HR18-1x.pth](https://1drv.ms/u/s!AiWjZ1Lamlxzcfh06SXd2GR1zKw)|
+| HRNetV2-W18 | 2x | 35.7 | 39.2 | [HRNetV2-W18](https://1drv.ms/u/s!Aus8VCZ_C_33cMkPimlmClRvmpw) | [MaskR-CNN-HR18-2x.pth](https://1drv.ms/u/s!AjfnYvdHLH5TafSZNlgq6UWnJWk)|
+| HRNetV2-W32 | 1x | 36.8 | 40.7 | [HRNetV2-W32](https://1drv.ms/u/s!Aus8VCZ_C_33dYBMemi9xOUFR0w) | [MaskR-CNN-HR32-1x.pth](https://1drv.ms/u/s!AiWjZ1LamlxzcugO3KlXfy_YhiE)|
+| HRNetV2-W32 | 2x | 37.6 | 42.1 | [HRNetV2-W32](https://1drv.ms/u/s!Aus8VCZ_C_33dYBMemi9xOUFR0w) | [MaskR-CNN-HR32-2x.pth](https://1drv.ms/u/s!AjfnYvdHLH5Taqt21comOmTbdBg)|
+
+
+
+
 ### Cascade R-CNN
 **Note:** we follow the original paper[2] and adopt 280k training iterations which is equal to 20 epochs in mmdetection.
 
