@@ -113,7 +113,7 @@ python tools/test.py configs/hrnet/faster_rcnn_hrnetv2p_w18_1x.py work_dirs/fast
  
 ## Other applications of HRNets (codes and models):
 * [Human pose estimation](https://github.com/leoxiaobin/deep-high-resolution-net.pytorch)
-* [Semantic segmentation](https://github.com/HRNet/HRNet-Semantic-Segmentation) (coming soon)
+* [Semantic segmentation](https://github.com/HRNet/HRNet-Semantic-Segmentation)
 * [Facial landmark detection](https://github.com/HRNet/HRNet-Facial-Landmark-Detection) (coming soon)
 * [Image classification](https://github.com/HRNet/HRNet-Image-Classification)
  
