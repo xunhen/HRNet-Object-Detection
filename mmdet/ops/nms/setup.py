@@ -33,7 +33,9 @@ def customize_compiler_for_nvcc(self):
     self.src_extensions.append('.cu')
 
     # save references to the default compiler_so and _comple methods
-    default_compiler_so = self.compiler_so
+    #add by wjc
+    if hasattr(self, 'compiler_so'):  # add by hwx at 20180408
+        default_compiler_so = self.compiler_so
     super = self._compile
 
     # now redefine the _compile method. This gets executed for each

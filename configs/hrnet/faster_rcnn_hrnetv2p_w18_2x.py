@@ -1,7 +1,7 @@
 # model settings
 model = dict(
     type='FasterRCNN',
-    pretrained='hrnetv2_pretrained/hrnetv2_w18_imagenet_pretrained.pth',
+    pretrained='../hrnetv2_pretrained/hrnetv2_w18_imagenet_pretrained.pth',
     backbone=dict(
         type='HighResolutionNet',
         extra=dict(
@@ -114,6 +114,7 @@ test_cfg = dict(
 # if you use zip format to store all images of coco, please use CocoZipDataset
 dataset_type = 'CocoZipDataset'
 data_root = '/hdfs/resrchvc/v-tich/cls/data/coco/'
+data_root = r'E:\\DataSet\\COCO\\2017\\'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=False)
 # else
@@ -126,8 +127,8 @@ data = dict(
     train=dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/instances_train2017.json',
-        img_prefix=data_root + 'images/train2017.zip',
-        img_scale=(1333, 800),
+        img_prefix=data_root + 'train2017.zip',
+        img_scale=(1000, 600),
         img_norm_cfg=img_norm_cfg,
         size_divisor=32,
         flip_ratio=0.5,
@@ -137,7 +138,7 @@ data = dict(
     val=dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/instances_val2017.json',
-        img_prefix=data_root + 'images/val2017.zip',
+        img_prefix=data_root + 'val2017.zip',
         img_scale=(1333, 800),
         img_norm_cfg=img_norm_cfg,
         size_divisor=32,
@@ -148,7 +149,7 @@ data = dict(
     test=dict(
         type=dataset_type,
         ann_file=data_root + 'annotations/instances_val2017.json',
-        img_prefix=data_root + 'images/val2017.zip',
+        img_prefix=data_root + 'val2017.zip',
         img_scale=(1333, 800),
         img_norm_cfg=img_norm_cfg,
         size_divisor=32,
@@ -158,7 +159,7 @@ data = dict(
         test_mode=True))
 # optimizer
 # if you use 8 GPUs for training, please change lr to 0.02
-optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
 # learning policy
 lr_config = dict(

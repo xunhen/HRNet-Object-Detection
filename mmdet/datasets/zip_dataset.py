@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 import os.path as osp
-
+import sys, os
 import mmcv
 import numpy as np
 from mmcv.parallel import DataContainer as DC
@@ -52,7 +52,9 @@ def load_images(filename):
 
 
 def load_img(filename, zipfilename):
-
+    zip_image_prefix = zipfilename.split('\\')[-1][:-4]
+    #add by wjc specially
+    filename = zip_image_prefix + '/' + filename
     with zipfile.ZipFile(zipfilename, 'r') as f:
         data = io.BytesIO(f.read(filename))
         img = Image.open(data).convert('RGB')

@@ -1,0 +1,6 @@
+1. when compile, need add the code in line 317 of cpp_extension.py:
+    cflags = COMMON_NVCC_FLAGS + cflags
+2. when compile nms, the error is 'MSVCCompiler' object has no attribute 'compiler_so'
+   just add the code:
+       if hasattr(self, 'compiler_so'):  # add by hwx at 20180408
+        default_compiler_so = self.compiler_so

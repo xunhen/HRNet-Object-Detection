@@ -1,10 +1,12 @@
 from __future__ import division
 
+using_dis = False
 import math
 import torch
 import numpy as np
 
-from torch.distributed import get_world_size, get_rank
+if using_dis:
+    from torch.distributed import get_world_size, get_rank
 from torch.utils.data.sampler import Sampler
 
 
