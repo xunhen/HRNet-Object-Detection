@@ -50,6 +50,47 @@ class GroupSampler(Sampler):
         return self.num_samples
 
 
+class GroupSamplerIterSize(Sampler):
+
+    def __init__(self, dataset, samples_per_gpu=1, iter_size=1):
+        assert hasattr(dataset, 'flag')
+        self.dataset = dataset
+        self.samples_per_gpu = samples_per_gpu
+        self.flag = dataset.flag.astype(np.int64)
+        self.group_sizes = np.bincount(self.flag)
+        self.num_samples = 0
+        self.iter_size = iter_size
+        for i, size in enumerate(self.group_sizes):
+            self.num_samples += int(np.ceil(
+                size / self.samples_per_gpu / self.iter_size)) * self.samples_per_gpu * self.iter_size
+
+    def __iter__(self):
+        indices = []
+        for i, size in enumerate(self.group_sizes):
+            if size == 0:
+                continue
+            indice = np.where(self.flag == i)[0]
+            assert len(indice) == size
+            np.random.shuffle(indice)
+            num_extra = int(np.ceil(size / self.samples_per_gpu / self.iter_size)
+                            ) * self.samples_per_gpu * self.iter_size - len(indice)
+            indice = np.concatenate([indice, indice[:num_extra]])
+            indices.append(indice)
+        indices = np.concatenate(indices)
+        indices = [
+            indices[i * self.samples_per_gpu:(i + 1) * self.samples_per_gpu]
+            for i in np.random.permutation(
+                range(len(indices) // self.samples_per_gpu))
+        ]
+        indices = np.concatenate(indices)
+        indices = torch.from_numpy(indices).long()
+        assert len(indices) == self.num_samples
+        return iter(indices)
+
+    def __len__(self):
+        return self.num_samples
+
+
 class DistributedGroupSampler(Sampler):
     """Sampler that restricts data loading to a subset of the dataset.
     It is especially useful in conjunction with
