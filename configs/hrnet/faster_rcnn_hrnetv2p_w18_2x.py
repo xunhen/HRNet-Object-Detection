@@ -159,8 +159,8 @@ data = dict(
         test_mode=True))
 # optimizer
 # if you use 8 GPUs for training, please change lr to 0.02
-optimizer = dict(type='SGD', lr=0.0025, momentum=0.9, weight_decay=0.0001)
-optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2))
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
+optimizer_config = dict(grad_clip=dict(max_norm=35, norm_type=2), iter_size=4)
 # learning policy
 lr_config = dict(
     policy='step',
@@ -181,7 +181,7 @@ log_config = dict(
 total_epochs = 24
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
-work_dir = './work_dirs/faster_rcnn_hrnetv2p_w18_2x'
+work_dir = '../work_dirs/faster_rcnn_hrnetv2p_w18_2x'
 load_from = None
 resume_from = None
 workflow = [('train', 1)]
