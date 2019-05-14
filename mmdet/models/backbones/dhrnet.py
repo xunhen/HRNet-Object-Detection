@@ -340,7 +340,7 @@ class DilateHighResolutionNet(nn.Module):
         mutli_fpn = []
         for index in range(len(num_channels_layer)):
             mutli_fpn.append(
-                nn.Conv2d(num_channels_layer[index], num_channels_layer[index], 3, 1, 1, bias=False))
+                nn.Conv2d(num_channels_layer[index], num_channels_final_layer[index], 3, 1, 1, bias=False))
         return mutli_fpn
 
     def _make_transition_layer(
