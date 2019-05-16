@@ -46,11 +46,13 @@ def conv3x3(in_planes, out_planes, stride=1, dilation=1):
 class BasicBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, inplanes, planes, stride=1, downsample=None, dilation=1):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, dilation=1, mix=False):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride, dilation=dilation)
         self.bn1 = BatchNorm2d(planes, momentum=BN_MOMENTUM)
         self.relu = nn.ReLU(inplace=True)
+        if mix:
+            dilation = 1
         self.conv2 = conv3x3(planes, planes, dilation=dilation)
         self.bn2 = BatchNorm2d(planes, momentum=BN_MOMENTUM)
         self.downsample = downsample
@@ -270,7 +272,7 @@ class DilateHighResolutionNet(nn.Module):
                  extra,
                  norm_eval=True,
                  zero_init_residual=False,
-                 frozen_stages=-1):
+                 frozen_stages=-1, mutli_fpn=False):
         super(DilateHighResolutionNet, self).__init__()
         self.norm_eval = norm_eval
         self.frozen_stages = frozen_stages
@@ -278,7 +280,7 @@ class DilateHighResolutionNet(nn.Module):
         # for
         self.extra = extra
 
-        self.mutli_fpn = False
+        self.mutli_fpn = mutli_fpn
         # stem network
         # stem net
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=2, padding=1,
@@ -437,6 +439,11 @@ class DilateHighResolutionNet(nn.Module):
         return nn.Sequential(*modules), num_inchannels
 
     def init_weights(self, pretrained=None):
+        if self.mutli_fpn:
+            for m in self.stage2to3_mutli_fpn:
+                kaiming_init(m)
+            for m in self.stage3to4_mutli_fpn:
+                kaiming_init(m)
         if isinstance(pretrained, str):
             logger = logging.getLogger()
             load_checkpoint(self, pretrained, strict=False, logger=logger)
