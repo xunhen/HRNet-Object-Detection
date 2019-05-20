@@ -503,6 +503,7 @@ class DilateHighResolutionNet(nn.Module):
         if self.mutli_fpn:
             for index in range(self.stage2_cfg['num_branches']):
                 output_list[index] = self.stage2to3_mutli_fpn[index](output_list[index]) + y_list[index]
+            output_list.append(y_list[-1])
 
         x_list = []
         for i in range(self.stage4_cfg['num_branches']):
@@ -515,6 +516,7 @@ class DilateHighResolutionNet(nn.Module):
         if self.mutli_fpn:
             for index in range(self.stage3_cfg['num_branches']):
                 output_list[index] = self.stage3to4_mutli_fpn[index](output_list[index]) + y_list[index]
+            output_list.append(y_list[-1])
         else:
             output_list = y_list
 
