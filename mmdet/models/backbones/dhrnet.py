@@ -276,7 +276,7 @@ class DilateHighResolutionNet(nn.Module):
                  extra,
                  norm_eval=True,
                  zero_init_residual=False,
-                 frozen_stages=-1, isDilate=True, mutli_fpn=False):
+                 frozen_stages=-1, isDilate=True, mutli_fpn=True):
         super(DilateHighResolutionNet, self).__init__()
         self.norm_eval = norm_eval
         self.frozen_stages = frozen_stages
@@ -348,7 +348,7 @@ class DilateHighResolutionNet(nn.Module):
         for index in range(len(num_channels_layer)):
             mutli_fpn.append(
                 nn.Conv2d(num_channels_layer[index], num_channels_final_layer[index], 3, 1, 1, bias=False))
-        return mutli_fpn
+        return nn.ModuleList(mutli_fpn)
 
     def _make_transition_layer(
             self, num_channels_pre_layer, num_channels_cur_layer):
@@ -447,9 +447,11 @@ class DilateHighResolutionNet(nn.Module):
     def init_weights(self, pretrained=None):
         if self.mutli_fpn:
             for m in self.stage2to3_mutli_fpn:
-                kaiming_init(m)
+                if isinstance(m, nn.Conv2d):
+                    kaiming_init(m)
             for m in self.stage3to4_mutli_fpn:
-                kaiming_init(m)
+                if isinstance(m, nn.Conv2d):
+                    kaiming_init(m)
         if isinstance(pretrained, str):
             logger = logging.getLogger()
             load_checkpoint(self, pretrained, strict=False, logger=logger)
@@ -511,7 +513,7 @@ class DilateHighResolutionNet(nn.Module):
         y_list = self.stage4(x_list)
 
         if self.mutli_fpn:
-            for index in range(self.stage4_cfg['num_branches']):
+            for index in range(self.stage3_cfg['num_branches']):
                 output_list[index] = self.stage3to4_mutli_fpn[index](output_list[index]) + y_list[index]
         else:
             output_list = y_list
