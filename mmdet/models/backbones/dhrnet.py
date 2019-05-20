@@ -120,7 +120,7 @@ class Bottleneck(nn.Module):
 
 class DilateHighResolutionModule(nn.Module):
     def __init__(self, num_branches, blocks, num_blocks, num_inchannels,
-                 num_channels, fuse_method, multi_scale_output=True):
+                 num_channels, fuse_method, multi_scale_output=True, isDilate=False):
         super(DilateHighResolutionModule, self).__init__()
         self._check_branches(
             num_branches, blocks, num_blocks, num_inchannels, num_channels)
@@ -130,6 +130,8 @@ class DilateHighResolutionModule(nn.Module):
         self.num_branches = num_branches
 
         self.multi_scale_output = multi_scale_output
+
+        self.isDilate = isDilate
 
         self.branches = self._make_branches(
             num_branches, blocks, num_blocks, num_channels)
@@ -165,7 +167,9 @@ class DilateHighResolutionModule(nn.Module):
                 BatchNorm2d(num_channels[branch_index] * block.expansion,
                             momentum=BN_MOMENTUM),
             )
-        dilation = 2 ** (num_branches - branch_index - 1)
+        dilation = 1
+        if self.isDilate:
+            dilation = 2 ** (num_branches - branch_index - 1)
         layers = []
         layers.append(block(self.num_inchannels[branch_index],
                             num_channels[branch_index], stride, downsample,
@@ -272,7 +276,7 @@ class DilateHighResolutionNet(nn.Module):
                  extra,
                  norm_eval=True,
                  zero_init_residual=False,
-                 frozen_stages=-1, mutli_fpn=False):
+                 frozen_stages=-1, isDilate=True, mutli_fpn=False):
         super(DilateHighResolutionNet, self).__init__()
         self.norm_eval = norm_eval
         self.frozen_stages = frozen_stages
@@ -280,6 +284,7 @@ class DilateHighResolutionNet(nn.Module):
         # for
         self.extra = extra
 
+        self.isDilate = isDilate
         self.mutli_fpn = mutli_fpn
         # stem network
         # stem net
@@ -310,7 +315,7 @@ class DilateHighResolutionNet(nn.Module):
         num_channels = [num_channels[i] * block.expansion for i in range(len(num_channels))]
         self.transition1 = self._make_transition_layer([stage1_out_channels], num_channels)
         # num_modules, num_branches, num_blocks, num_channels, block, fuse_method, num_inchannels
-        self.stage2, pre_stage_channels = self._make_stage(self.stage2_cfg, num_channels)
+        self.stage2, pre_stage_channels = self._make_stage(self.stage2_cfg, num_channels, isDilate=self.isDilate)
 
         # stage 3
         self.stage3_cfg = self.extra['stage3']
@@ -320,7 +325,7 @@ class DilateHighResolutionNet(nn.Module):
         block = blocks_dict[block_type]
         num_channels = [num_channels[i] * block.expansion for i in range(len(num_channels))]
         self.transition2 = self._make_transition_layer(pre_stage_channels, num_channels)
-        self.stage3, pre_stage_channels = self._make_stage(self.stage3_cfg, num_channels)
+        self.stage3, pre_stage_channels = self._make_stage(self.stage3_cfg, num_channels, isDilate=self.isDilate)
 
         # stage 4
         self.stage4_cfg = self.extra['stage4']
@@ -330,7 +335,7 @@ class DilateHighResolutionNet(nn.Module):
         block = blocks_dict[block_type]
         num_channels = [num_channels[i] * block.expansion for i in range(len(num_channels))]
         self.transition3 = self._make_transition_layer(pre_stage_channels, num_channels)
-        self.stage4, pre_stage_channels = self._make_stage(self.stage4_cfg, num_channels)
+        self.stage4, pre_stage_channels = self._make_stage(self.stage4_cfg, num_channels, isDilate=self.isDilate)
         if self.mutli_fpn:
             self.stage2to3_mutli_fpn = self._make_mutli_fpn(self.stage2_cfg['num_channels'],
                                                             self.stage3_cfg['num_channels'])
@@ -409,7 +414,7 @@ class DilateHighResolutionNet(nn.Module):
                 param.requires_grad = False
 
     def _make_stage(self, layer_config, num_inchannels,
-                    multi_scale_output=True):
+                    multi_scale_output=True, isDilate=False):
         num_modules = layer_config['num_modules']
         num_branches = layer_config['num_branches']
         num_blocks = layer_config['num_blocks']
@@ -432,7 +437,8 @@ class DilateHighResolutionNet(nn.Module):
                                            num_inchannels,
                                            num_channels,
                                            fuse_method,
-                                           reset_multi_scale_output)
+                                           reset_multi_scale_output,
+                                           isDilate=isDilate)
             )
             num_inchannels = modules[-1].get_num_inchannels()
 
