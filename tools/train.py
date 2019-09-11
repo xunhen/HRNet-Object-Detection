@@ -1,6 +1,9 @@
 from __future__ import division
-
 import os
+import sys
+
+sys.path = ['D:\DeepLearning\papers\HRNet-Object-Detection', ] + sys.path
+
 import argparse
 from mmcv import Config
 
@@ -28,7 +31,7 @@ def parse_args():
         type=int,
         default=1,
         help='number of gpus to use '
-        '(only applicable to non-distributed training)')
+             '(only applicable to non-distributed training)')
     parser.add_argument('--seed', type=int, default=None, help='random seed')
     parser.add_argument(
         '--launcher',

@@ -46,7 +46,7 @@ def conv3x3(in_planes, out_planes, stride=1, dilation=1):
 class BasicBlock(nn.Module):
     expansion = 1
 
-    def __init__(self, inplanes, planes, stride=1, downsample=None, dilation=1, mix=False):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, dilation=1, mix=True):
         super(BasicBlock, self).__init__()
         self.conv1 = conv3x3(inplanes, planes, stride, dilation=dilation)
         self.bn1 = BatchNorm2d(planes, momentum=BN_MOMENTUM)
